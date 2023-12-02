@@ -253,8 +253,8 @@ public:
 		}
 	}
 
-	int move(char input) {
-		int a = -1;
+	int* move(char input) {
+		int a[2] = { 0,-1 };
 
 		int C_x = get_vertex_cordinates_x("C");
 		//cout << C_x << endl;
@@ -265,72 +265,68 @@ public:
 		if (input == 'w' || input == 72) { // 72 is up arrow
 			if (C_y == 0) {
 				cout << "Can't move up" << endl;
-
-				a = 0;
+				a[1] = 0;
 			}
 
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x, C_y - 1, "C");
-
-				a = 1;
+				a[1] = 1;
 			}
 		}
 
 		else if (input == 's' || input == 80) { // 80 is down arrow
 			if (C_y == 9) {
 				cout << "Can't move down" << endl;
-
-				a = 0;
+				a[1] = 0;
 			}
 
 			else {
 				update_vertex(C_x, C_y, "*");
 
 				if (adjacency_list[C_x * 10 + (C_y + 1)].get_head()->data.data == "E") {
-					
+					a[0] = 1;
+
+					update_vertex(C_x, C_y + 1, "C");
+					a[1] = 1;
+
+					return a;
 				}
 
 				update_vertex(C_x, C_y + 1, "C");
-
-				a = 1;
+				a[1] = 1;
 			}
 		}
 
 		else if (input == 'd' || input == 77) { // 77 is right arrow
 			if (C_x == 9) {
 				cout << "Can't move right" << endl;
-
-				a = 0;
+				a[1] = 0;
 			}
 
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x + 1, C_y, "C");
-
-				a = 1;
+				a[1] = 1;
 			}
 		}
 
 		else if (input == 'a' || input == 75) { // 75 is left arrow
 			if (C_x == 0) {
 				cout << "Can't move left" << endl;
-
-				a = 0;
+				a[1] = 0;
 			}
 
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x - 1, C_y, "C");
-
-				a = 1;
+				a[1] = 1;
 			}
 		}
 
 		else if (input != 'w' && input != 72 && input != 's' && input != 80 && input != 'd' && input != 77 && input != 'a' && input != 75) {
 			cout << "Invalid input" << endl;
-
-			a = 0;
+			a[1] = 0;
 		}
 
 		return a;

@@ -19,8 +19,8 @@ int main() {
     Graph graph(100);
 
     char move = ' ';
-    int a = -1; //to check if move is valid or not
     char mode = '1'; //1 for manual, 2 for automatic
+    int* a;
 
     for (char i = 0; i < 10; i++) {
         for (char j = 0; j < 10; j++) {
@@ -132,7 +132,17 @@ int main() {
                     a = graph.move(move);
                 }
 
-                if (a == 1) { //if move is valid
+                //a[0] stores the value if player wins or not. 0 means player loses, 1 means player wins
+                //a[1] stores the value if move is valid or not. 0 means move is invalid, 1 means move is valid
+
+                if (a[0] == 1) {
+                    cout << endl << endl << RED << "You Win!" << RESET << endl;
+                    cout << RED << "Press any key to continue..." << RESET << endl;
+                    _getch();
+                    break;
+                }
+
+                if (a[0] == 0 && a[1] == 1) { //if player does not win and move is valid
                     system("cls");
 
                     cout << RED << "2D Race Car Game - Manual Mode" << RESET << endl << endl;
