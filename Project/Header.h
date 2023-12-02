@@ -149,6 +149,16 @@ public:
 			}
 		}
 	}
+	
+	void update_weight(int x, int y, float new_weight) {
+		// x and y being the x and y coordinates
+		for (int i = 0; i < num_of_vertex; i++) {
+			if (adjacency_list[i].get_head()->data.x == x && adjacency_list[i].get_head()->data.y == y) {
+				adjacency_list[i].get_head()->data.weight = new_weight;
+				break;
+			}
+		}
+	}
 
 	//get_vertex_cordinates_x("C")
 	int get_vertex_cordinates_x(string vertex) {
@@ -276,6 +286,11 @@ public:
 
 			else {
 				update_vertex(C_x, C_y, "*");
+
+				if (adjacency_list[C_x * 10 + (C_y + 1)].get_head()->data.data == "E") {
+					
+				}
+
 				update_vertex(C_x, C_y + 1, "C");
 
 				a = 1;

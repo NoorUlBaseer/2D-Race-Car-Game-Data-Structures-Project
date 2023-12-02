@@ -66,9 +66,19 @@ int main() {
 
     graph.update_vertex(9, 9, "E");
 
-    graph.update_vertex(5, 8, "X");
+    //place power-ups
+    graph.update_vertex(5, 8, "X"); //power-up
+    graph.update_weight(5, 8, 2.0f); //power-up
 
-    graph.update_vertex(3, 2, "#");
+    graph.update_vertex(5, 5, "X"); //power-up
+    graph.update_weight(5, 5, 2.0f); //power-up
+
+    //place obstacles
+    graph.update_vertex(3, 2, "#"); //obstacle
+    graph.update_weight(3, 2, 0.0f); //obstacle
+
+    graph.update_vertex(4, 4, "#"); //obstacle
+    graph.update_weight(4, 4, 0.0f); //obstacle
 
     while (true) {
         system("cls");
