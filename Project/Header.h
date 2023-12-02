@@ -267,7 +267,7 @@ public:
 			}
 		}
 
-		else if (input == 's' || input == 80) {
+		else if (input == 's' || input == 80) { // 80 is down arrow
 			if (C_y == 9) {
 				cout << "Can't move down" << endl;
 
@@ -282,9 +282,9 @@ public:
 			}
 		}
 
-		else if (input == 'd' || input == 77) {
+		else if (input == 'd' || input == 77) { // 77 is right arrow
 			if (C_x == 9) {
-				cout << "Can't move left" << endl;
+				cout << "Can't move right" << endl;
 
 				a = 0;
 			}
@@ -297,9 +297,9 @@ public:
 			}
 		}
 
-		else if (input == 'a' || input == 75) {
+		else if (input == 'a' || input == 75) { // 75 is left arrow
 			if (C_x == 0) {
-				cout << "Can't move right" << endl;
+				cout << "Can't move left" << endl;
 
 				a = 0;
 			}

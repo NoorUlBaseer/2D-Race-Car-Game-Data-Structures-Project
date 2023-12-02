@@ -164,6 +164,11 @@ int main() {
             Sleep(1000);
             return 0;
         }
+
+        else {
+			cout << "Invalid Input!" << endl;
+			Sleep(1000);
+		}
     }
     return 0;
 }
