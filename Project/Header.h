@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+using namespace std;
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -10,8 +11,6 @@
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
 //#define WHITE   "\033[37m"
-
-using namespace std;
 
 class Graph_Node {
 public:
@@ -173,6 +172,7 @@ public:
 
 	void display_grid() {
 		// Display grid in a 10x10 grid
+
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				int x = i;
@@ -185,19 +185,19 @@ public:
 				else {
 					//cout << temp->data.data << "  ";
 					if (temp->data.data == "C") {
-						cout << BLUE << temp->data.data << RESET << "   ";
+						cout << YELLOW << temp->data.data << RESET << "   ";
 					}
 					else if (temp->data.data == "S" || temp->data.data == "E") {
 						cout << RED << temp->data.data << RESET << "   ";
 					}
 					else if (temp->data.data == "#") {
-						cout << YELLOW << temp->data.data << RESET << "   ";
+						cout << MAGENTA << temp->data.data << RESET << "   ";
 					}
 					else if (temp->data.data == "X") {
 						cout << GREEN << temp->data.data << RESET << "   ";
 					}
 					else {
-						cout << MAGENTA << temp->data.data << RESET << "   ";
+						cout << CYAN << temp->data.data << RESET << "   ";
 					}
 				}
 
@@ -243,47 +243,81 @@ public:
 		}
 	}
 
-	void move(char input) {
+	int move(char input) {
+		int a = -1;
+
 		int C_x = get_vertex_cordinates_x("C");
 		//cout << C_x << endl;
+
 		int C_y = get_vertex_cordinates_y("C");
 		//cout << C_y << endl;
 
 		if (input == 'w' || input == 72) { // 72 is up arrow
 			if (C_y == 0) {
 				cout << "Can't move up" << endl;
+
+				a = 0;
 			}
+
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x, C_y - 1, "C");
+
+				a = 1;
 			}
 		}
+
 		else if (input == 's' || input == 80) {
 			if (C_y == 9) {
 				cout << "Can't move down" << endl;
+
+				a = 0;
 			}
+
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x, C_y + 1, "C");
+
+				a = 1;
 			}
 		}
+
 		else if (input == 'd' || input == 77) {
 			if (C_x == 9) {
 				cout << "Can't move left" << endl;
+
+				a = 0;
 			}
+
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x + 1, C_y, "C");
+
+				a = 1;
 			}
 		}
+
 		else if (input == 'a' || input == 75) {
 			if (C_x == 0) {
 				cout << "Can't move right" << endl;
+
+				a = 0;
 			}
+
 			else {
 				update_vertex(C_x, C_y, "*");
 				update_vertex(C_x - 1, C_y, "C");
+
+				a = 1;
 			}
 		}
+
+		else if (input != 'w' && input != 72 && input != 's' && input != 80 && input != 'd' && input != 77 && input != 'a' && input != 75) {
+			cout << "Invalid input" << endl;
+
+			a = 0;
+		}
+
+		return a;
 	}
 };

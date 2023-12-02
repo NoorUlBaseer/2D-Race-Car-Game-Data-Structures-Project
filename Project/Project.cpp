@@ -2,12 +2,25 @@
 #include <string>
 #include <windows.h>
 #include <conio.h>
+#include<iomanip>
 #include "Header.h"
 using namespace std;
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+//#define WHITE   "\033[37m"
+
 int main() {
     Graph graph(100);
+
     char move = ' ';
+    int a = -1; //to check if move is valid or not
+    char mode = '1'; //1 for manual, 2 for automatic
 
     for (char i = 0; i < 10; i++) {
         for (char j = 0; j < 10; j++) {
@@ -58,18 +71,99 @@ int main() {
     graph.update_vertex(3, 2, "#");
 
     while (true) {
-		graph.display_grid();
-        
-        char move = _getch();
+        system("cls");
+        cout << RED << "Welcome to 2D Race Car Game!" << RESET << endl << endl;
 
-		if (move == 27) { //ESC
-			break;
-		}
-		else {
+        cout << RED << "Press 1 for Manual Mode" << RESET << endl;
+        cout << RED << "Press 2 for Automatic Mode" << RESET << endl;
+        cout << RED << "Press 0 to Exit" << RESET << endl << endl;
+
+        cout << RED << "Enter your choice: ";
+        mode = _getch();
+        cout << mode << endl << endl;
+        cout << RESET << endl;
+
+        if (mode == '1') {
+            cout << RED << "Loading..." << RESET << endl;
+            Sleep(1000);
+
             system("cls");
-            graph.move(move);
-		}
-	}
 
+            cout << RED << "2D Race Car Game - Manual Mode" << RESET << endl << endl;
+            graph.display_grid();
+
+            //controls
+            cout << BLUE << "\tControls:" << RESET << endl;
+            cout << RED << "W and up arrow " << RESET << "-" << RED << " Accelerate" << RESET << endl;
+            cout << RED << "S and down arrow " << RESET << "-" << RED << " Brake and reverse" << RESET << endl;
+            cout << RED << "A and left arrow " << RESET << "-" << RED << " Turn left" << RESET << endl;
+            cout << RED << "D and right arrow " << RESET << "-" << RED << " Turn right" << RESET << endl;
+            cout << RED << "ESC " << RESET << "-" << RED << " Exit" << RESET << endl << endl;
+
+            //key
+            cout << BLUE << "Key:" << RESET << endl;
+            cout << RED << "Car: " << RESET << GREEN << "C" << RESET << endl;
+            cout << RED << "Start Line: " << RESET << GREEN << "S" << RESET << endl;
+            cout << RED << "Finish Line: " << RESET << GREEN << "E" << RESET << endl;
+            cout << RED << "Power-Ups: " << RESET << GREEN << "+" << RESET << endl;
+            cout << RED << "Obstacles: " << RESET << GREEN << "#" << RESET << endl << endl;
+
+            while (true) {
+                move = _getch();
+
+                if (move == 27) { //ESC
+                    cout << endl << endl << RED << "Exiting..." << RESET << endl;
+                    Sleep(1000);
+
+                    break;
+                }
+                else {
+
+                    a = graph.move(move);
+                }
+
+                if (a == 1) { //if move is valid
+                    system("cls");
+
+                    cout << RED << "2D Race Car Game - Manual Mode" << RESET << endl << endl;
+                    graph.display_grid();
+
+                    //controls
+                    cout << BLUE << "\tControls:" << RESET << endl;
+                    cout << RED << "W and up arrow " << RESET << "-" << RED << " Accelerate" << RESET << endl;
+                    cout << RED << "S and down arrow " << RESET << "-" << RED << " Brake and reverse" << RESET << endl;
+                    cout << RED << "A and left arrow " << RESET << "-" << RED << " Turn left" << RESET << endl;
+                    cout << RED << "D and right arrow " << RESET << "-" << RED << " Turn right" << RESET << endl;
+                    cout << RED << "ESC " << RESET << "-" << RED << " Exit" << RESET << endl << endl;
+
+                    //key
+                    cout << BLUE << "Key:" << RESET << endl;
+                    cout << RED << "Car: " << RESET << GREEN << "C" << RESET << endl;
+                    cout << RED << "Start Line: " << RESET << GREEN << "S" << RESET << endl;
+                    cout << RED << "Finish Line: " << RESET << GREEN << "E" << RESET << endl;
+                    cout << RED << "Power-Ups: " << RESET << GREEN << "+" << RESET << endl;
+                    cout << RED << "Obstacles: " << RESET << GREEN << "#" << RESET << endl << endl;
+                }
+            }
+        }
+
+        else if (mode == '2') {
+            cout << RED << "Loading..." << RESET << endl;
+            Sleep(1000);
+
+            system("cls");
+
+            cout << RED << "2D Race Car Game - Automatic Mode" << RESET << endl << endl;
+
+            string stop;
+            cin >> stop;
+        }
+
+        else if (mode == '0') {
+            cout << RED << "Exiting..." << RESET << endl;
+            Sleep(1000);
+            return 0;
+        }
+    }
     return 0;
 }
