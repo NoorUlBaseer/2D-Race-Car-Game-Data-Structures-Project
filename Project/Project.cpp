@@ -68,17 +68,42 @@ int main() {
 
     //place power-ups
     graph.update_vertex(5, 8, "X"); //power-up
-    graph.update_weight(5, 8, 2.0f); //power-up
+    graph.update_weight(5, 8, -5.0f); //power-up
 
     graph.update_vertex(5, 5, "X"); //power-up
-    graph.update_weight(5, 5, 2.0f); //power-up
+    graph.update_weight(5, 5, -5.0f); //power-up
+
+    graph.update_vertex(9, 5, "X"); //power-up
+    graph.update_weight(9, 5, -5.0f); //power-up
+
+    graph.update_vertex(5, 1, "X"); //power-up
+    graph.update_weight(5, 1, -5.0f); //power-up
+
+    graph.update_vertex(0, 2, "X"); //power-up
+    graph.update_weight(0, 2, -5.0f); //power-up
+
+    graph.update_vertex(0, 6, "X"); //power-up
+    graph.update_weight(0, 6, -5.0f); //power-up
 
     //place obstacles
-    graph.update_vertex(3, 2, "#"); //obstacle
-    graph.update_weight(3, 2, 0.0f); //obstacle
+    graph.update_vertex(3, 2, "#"); //obstacle 
+    graph.update_weight(3, 2, 20.0f); //obstacle
+
+    graph.update_vertex(3, 3, "#"); //obstacle
+    graph.update_weight(3, 3, 20.0f); //obstacle
+
+    graph.update_vertex(3, 4, "#"); //obstacle
+    graph.update_weight(3, 4, 20.0f); //obstacle
+
+    graph.update_vertex(3, 5, "#"); //obstacle
+    graph.update_weight(3, 5, 20.0f); //obstacle
+
 
     graph.update_vertex(4, 4, "#"); //obstacle
-    graph.update_weight(4, 4, 0.0f); //obstacle
+    graph.update_weight(4, 4, 20.0f); //obstacle
+
+    graph.update_vertex(5, 4, "#"); //obstacle
+    graph.update_weight(5, 4, 20.0f); //obstacle
 
     while (true) {
         system("cls");
