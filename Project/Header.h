@@ -737,4 +737,152 @@ public:
 			delete temp;
 		}
 	}
+
+	void Dijkstra(int s_x, int s_y, int e_x, int e_y) {
+		Queue priority_queue;
+
+		float* distance = new float[num_of_vertex];
+		for (int i = 0; i < num_of_vertex; i++) {
+			distance[i] = 1000.0f;
+		}
+
+		bool* visited = new bool[num_of_vertex];
+		for (int i = 0; i < num_of_vertex; i++) {
+			visited[i] = false;
+		}
+
+		int* parent = new int[num_of_vertex];
+		for (int i = 0; i < num_of_vertex; i++) {
+			parent[i] = -1;
+		}
+
+		string* path = new string[num_of_vertex];
+		for (int i = 0; i < num_of_vertex; i++) {
+			path[i] = "";
+		}
+
+		float* cost = new float[num_of_vertex];
+		for (int i = 0; i < num_of_vertex; i++) {
+			cost[i] = 0.0f;
+		}
+
+		distance[s_x * 10 + s_y] = 0.0f;
+		visited[s_x * 10 + s_y] = true;
+		path[s_x * 10 + s_y] = get_vertex(s_x, s_y).data;
+		cost[s_x * 10 + s_y] = 0.0f;
+
+		priority_queue.enqueue(get_vertex(s_x, s_y));
+
+		while (!priority_queue.is_empty()) {
+			Queue_Node* temp = priority_queue.dequeue();
+
+			if (temp->data.y != 0 && get_vertex(temp->data.x, temp->data.y - 1).data != "#") {
+				if (visited[(temp->data.x) * 10 + (temp->data.y - 1)] == false) {
+					priority_queue.enqueue(get_vertex(temp->data.x, temp->data.y - 1));
+
+					distance[(temp->data.x) * 10 + (temp->data.y - 1)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+					visited[(temp->data.x) * 10 + (temp->data.y - 1)] = true;
+					parent[(temp->data.x) * 10 + (temp->data.y - 1)] = (temp->data.x) * 10 + (temp->data.y);
+					path[(temp->data.x) * 10 + (temp->data.y - 1)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x, temp->data.y - 1).data;
+					cost[(temp->data.x) * 10 + (temp->data.y - 1)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x, temp->data.y - 1).weight;
+				}
+
+				else {
+					if (distance[(temp->data.x) * 10 + (temp->data.y - 1)] > distance[(temp->data.x) * 10 + (temp->data.y)] + 1) {
+						distance[(temp->data.x) * 10 + (temp->data.y - 1)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+						parent[(temp->data.x) * 10 + (temp->data.y - 1)] = (temp->data.x) * 10 + (temp->data.y);
+						path[(temp->data.x) * 10 + (temp->data.y - 1)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x, temp->data.y - 1).data;
+						cost[(temp->data.x) * 10 + (temp->data.y - 1)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x, temp->data.y - 1).weight;
+					}
+				}
+
+			}
+
+			if (temp->data.x != 9 && get_vertex(temp->data.x + 1, temp->data.y).data != "#") {
+				if (visited[(temp->data.x + 1) * 10 + (temp->data.y)] == false) {
+					priority_queue.enqueue(get_vertex(temp->data.x + 1, temp->data.y));
+
+					distance[(temp->data.x + 1) * 10 + (temp->data.y)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+					visited[(temp->data.x + 1) * 10 + (temp->data.y)] = true;
+					parent[(temp->data.x + 1) * 10 + (temp->data.y)] = (temp->data.x) * 10 + (temp->data.y);
+					path[(temp->data.x + 1) * 10 + (temp->data.y)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x + 1, temp->data.y).data;
+					cost[(temp->data.x + 1) * 10 + (temp->data.y)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x + 1, temp->data.y).weight;
+				}
+
+				else {
+					if (distance[(temp->data.x + 1) * 10 + (temp->data.y)] > distance[(temp->data.x) * 10 + (temp->data.y)] + 1) {
+						distance[(temp->data.x + 1) * 10 + (temp->data.y)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+						parent[(temp->data.x + 1) * 10 + (temp->data.y)] = (temp->data.x) * 10 + (temp->data.y);
+						path[(temp->data.x + 1) * 10 + (temp->data.y)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x + 1, temp->data.y).data;
+						cost[(temp->data.x + 1) * 10 + (temp->data.y)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x + 1, temp->data.y).weight;
+					}
+				}
+
+			}
+
+			if (temp->data.x != 0 && get_vertex(temp->data.x - 1, temp->data.y).data != "#") {
+				if (visited[(temp->data.x - 1) * 10 + (temp->data.y)] == false) {
+					priority_queue.enqueue(get_vertex(temp->data.x - 1, temp->data.y));
+
+					distance[(temp->data.x - 1) * 10 + (temp->data.y)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+					visited[(temp->data.x - 1) * 10 + (temp->data.y)] = true;
+					parent[(temp->data.x - 1) * 10 + (temp->data.y)] = (temp->data.x) * 10 + (temp->data.y);
+					path[(temp->data.x - 1) * 10 + (temp->data.y)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x - 1, temp->data.y).data;
+					cost[(temp->data.x - 1) * 10 + (temp->data.y)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x - 1, temp->data.y).weight;
+				}
+
+				else {
+					if (distance[(temp->data.x - 1) * 10 + (temp->data.y)] > distance[(temp->data.x) * 10 + (temp->data.y)] + 1) {
+						distance[(temp->data.x - 1) * 10 + (temp->data.y)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+						parent[(temp->data.x - 1) * 10 + (temp->data.y)] = (temp->data.x) * 10 + (temp->data.y);
+						path[(temp->data.x - 1) * 10 + (temp->data.y)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x - 1, temp->data.y).data;
+						cost[(temp->data.x - 1) * 10 + (temp->data.y)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x - 1, temp->data.y).weight;
+					}
+				}
+			}
+
+			if (temp->data.y != 9 && get_vertex(temp->data.x, temp->data.y + 1).data != "#") {
+				if (visited[(temp->data.x) * 10 + (temp->data.y + 1)] == false) {
+					priority_queue.enqueue(get_vertex(temp->data.x, temp->data.y + 1));
+
+					distance[(temp->data.x) * 10 + (temp->data.y + 1)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+					visited[(temp->data.x) * 10 + (temp->data.y + 1)] = true;
+					parent[(temp->data.x) * 10 + (temp->data.y + 1)] = (temp->data.x) * 10 + (temp->data.y);
+					path[(temp->data.x) * 10 + (temp->data.y + 1)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x, temp->data.y + 1).data;
+					cost[(temp->data.x) * 10 + (temp->data.y + 1)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x, temp->data.y + 1).weight;
+				}
+
+				else {
+					if (distance[(temp->data.x) * 10 + (temp->data.y + 1)] > distance[(temp->data.x) * 10 + (temp->data.y)] + 1) {
+						distance[(temp->data.x) * 10 + (temp->data.y + 1)] = distance[(temp->data.x) * 10 + (temp->data.y)] + 1;
+						parent[(temp->data.x) * 10 + (temp->data.y + 1)] = (temp->data.x) * 10 + (temp->data.y);
+						path[(temp->data.x) * 10 + (temp->data.y + 1)] = path[(temp->data.x) * 10 + (temp->data.y)] + " " + get_vertex(temp->data.x, temp->data.y + 1).data;
+						cost[(temp->data.x) * 10 + (temp->data.y + 1)] = cost[(temp->data.x) * 10 + (temp->data.y)] + get_vertex(temp->data.x, temp->data.y + 1).weight;
+					}
+				}
+			}
+
+			delete temp;
+		}
+
+
+		int index = e_x * 10 + e_y;
+
+		while (parent[index] != -1) {
+			system("cls");
+
+			cout << RED << "2D Race Car Game - Automatic Mode" << RESET << endl << endl;
+			display_grid();
+
+			update_vertex(index / 10, index % 10, "C");
+			index = parent[index];
+		}
+
+		system("cls");
+
+		cout << RED << "2D Race Car Game - Automatic Mode" << RESET << endl << endl;
+		display_grid();
+
+		cout << "Total cost: " << cost[e_x * 10 + e_y] << endl;
+	}
 };

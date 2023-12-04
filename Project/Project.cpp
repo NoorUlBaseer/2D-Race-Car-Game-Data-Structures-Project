@@ -22,6 +22,7 @@ int main() {
     char abc = ' ';
     char mode = '1'; //1 for manual, 2 for automatic
     int* a;
+    int start_x, start_y, end_x, end_y;
 
     for (char i = 0; i < 10; i++) {
         for (char j = 0; j < 10; j++) {
@@ -189,8 +190,76 @@ int main() {
 
             cout << RED << "2D Race Car Game - Automatic Mode" << RESET << endl << endl;
 
-            string stop;
-            cin >> stop;
+            //now update whole grid to store '*' in it
+            for (char i = 0; i < 10; i++) {
+                for (char j = 0; j < 10; j++) {
+                    string vertex = string(1, 'A' + i) + to_string(j);
+                    graph.update_vertex(i, j, "*");
+                    graph.update_weight(i, j, 1.0f);
+                }
+            }
+
+            //display grid
+            graph.display_grid();
+
+            while (true) {
+                //ask the user for the start and end coordinates
+                cout << RED << "Enter the X coordinates of the start point: " << RESET;
+                cout << GREEN;
+                cin >> start_x;
+                cout << RESET;
+
+                cout << RED << "Enter the Y coordinates of the start point: " << RESET;
+                cout << GREEN;
+                cin >> start_y;
+                cout << RESET;
+
+                cout << endl;
+
+                cout << RED << "Enter the X coordinates of the end point: " << RESET;
+                cout << GREEN;
+                cin >> end_x;
+                cout << RESET;
+
+                cout << RED << "Enter the Y coordinates of the end point: " << RESET;
+                cout << GREEN;
+                cin >> end_y;
+                cout << RESET;
+
+                cout << endl;
+
+                if (start_x < 0 || start_x > 9 || start_y < 0 || start_y > 9 || end_x < 0 || end_x > 9 || end_y < 0 || end_y > 9) {
+                    cout << "Invalid Input!" << endl << endl;
+                    Sleep(1000);
+                }
+                else {
+                    break;
+                }
+            }
+
+            graph.update_vertex(start_x, start_y, "S");
+            graph.update_weight(start_x, start_y, 0.0f);
+
+            graph.update_vertex(end_x, end_y, "E");
+            graph.update_weight(end_x, end_y, 0.0f);
+
+            Queue obstacles_auto; //queue to store obstacles
+            Queue powerups_auto; //queue to store power-ups
+
+            graph.generate_obstacles(obstacles_auto); //generate random obstacles
+            graph.generate_powerups(powerups_auto); //generate random power-ups
+
+            //display grid
+            graph.display_grid();
+
+            //call function to find the shortest path
+            cout << RED << "Press any key to continue..." << RESET << endl;
+            abc = _getch();
+
+            graph.Dijkstra(start_x, start_y, end_x, end_y);
+
+            cout << endl << RED << "Press any key to continue..." << RESET << endl;
+            abc = _getch();
         }
 
         else if (mode == '3') {
