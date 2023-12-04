@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 #define RESET   "\033[0m"
@@ -92,16 +94,128 @@ public:
 	}
 };
 
+class Queue_Node {
+public:
+	Graph_Node data;
+	Queue_Node* next;
+
+	Queue_Node(Graph_Node data) {
+		this->data = data;
+		next = NULL;
+	}
+
+	Queue_Node() {
+		next = NULL;
+	}
+};
+
+class Queue {
+private:
+	Queue_Node* front;
+	Queue_Node* rear;
+	int size;
+
+public:
+	Queue() {
+		front = NULL;
+		rear = NULL;
+		size = 0;
+	}
+
+	void enqueue(Graph_Node data) {
+		Queue_Node* newNode = new Queue_Node(data);
+
+		if (front == NULL) {
+			front = newNode;
+			rear = newNode;
+		}
+
+		else {
+			rear->next = newNode;
+			rear = newNode;
+		}
+
+		size++;
+	}
+
+	Queue_Node* dequeue() {
+		Queue_Node* temp = front;
+
+		if (front == NULL) {
+			cout << "Queue is empty" << endl;
+			//return Queue_Node();
+		}
+
+		else if (front == rear) {
+			front = NULL;
+			rear = NULL;
+		}
+
+		else {
+			front = front->next;
+		}
+
+		size--;
+		return temp;
+	}
+
+	bool is_empty() {
+		if (front == NULL) {
+			return true;
+		}
+		return false;
+	}
+
+	void display() {
+		Queue_Node* temp = front;
+
+		while (temp) {
+			cout << temp->data.data << " ";
+			temp = temp->next;
+		}
+		cout << endl;
+	}
+
+	int get_size() {
+		return size;
+	}
+
+	Queue_Node* get_front() {
+		return front;
+	}
+
+	Queue_Node* get_rear() {
+		return rear;
+	}
+};
+
 class Graph {
 private:
 	Linked_List* adjacency_list;
 	int num_of_vertices, num_of_vertex;
+	int start_x, start_y, end_x, end_y; // coordinates of the start and end positions
+	int score; // score of the player
 
 public:
 	Graph(int num_of_vertices) {
 		this->num_of_vertices = num_of_vertices;
 		num_of_vertex = 0;
 		adjacency_list = new Linked_List[num_of_vertices];
+
+		start_x = -1;
+		start_y = -1;
+		end_x = -1;
+		end_y = -1;
+
+		score = 10;
+	}
+
+	void set_score(int score) {
+		this->score = score;
+	}
+
+	int get_score() {
+		return score;
 	}
 
 	void add_vertex(string vertex, int x, int y) {
@@ -180,6 +294,16 @@ public:
 		return -1;
 	}
 
+	//function that returns a node with the given x and y coordinates
+	Graph_Node get_vertex(int x, int y) {
+		for (int i = 0; i < num_of_vertex; i++) {
+			if (adjacency_list[i].get_head()->data.x == x && adjacency_list[i].get_head()->data.y == y) {
+				return adjacency_list[i].get_head()->data;
+			}
+		}
+		return Graph_Node();
+	}
+
 	void display_grid() {
 		// Display grid in a 10x10 grid
 
@@ -195,19 +319,19 @@ public:
 				else {
 					//cout << temp->data.data << "  ";
 					if (temp->data.data == "C") {
-						cout << YELLOW << temp->data.data << RESET << "   ";
+						cout << BLUE << temp->data.data << RESET << "   ";
 					}
 					else if (temp->data.data == "S" || temp->data.data == "E") {
 						cout << RED << temp->data.data << RESET << "   ";
 					}
 					else if (temp->data.data == "#") {
-						cout << MAGENTA << temp->data.data << RESET << "   ";
+						cout << YELLOW << temp->data.data << RESET << "   ";
 					}
-					else if (temp->data.data == "X") {
-						cout << GREEN << temp->data.data << RESET << "   ";
+					else if (temp->data.data == "+") {
+						cout << CYAN << temp->data.data << RESET << "   ";
 					}
 					else {
-						cout << CYAN << temp->data.data << RESET << "   ";
+						cout << MAGENTA << temp->data.data << RESET << "   ";
 					}
 				}
 
@@ -269,9 +393,42 @@ public:
 			}
 
 			else {
-				update_vertex(C_x, C_y, "*");
+				if (C_x == start_x && C_y == start_y) {
+					update_vertex(C_x, C_y, "S");
+					update_weight(C_x, C_y, 0.0f);
+				}
+
+				else {
+					update_vertex(C_x, C_y, "*");
+					update_weight(C_x, C_y, 1.0f);
+				}
+
+				string data = adjacency_list[C_x * 10 + (C_y - 1)].get_head()->data.data;
+
+				if (data == "+") {
+					if (score < 0) {
+						score = 10;
+					}
+					else {
+						score *= 2;
+					}
+				}
+
+				else if (data == "#") {
+					cout << "You hit an obstacle" << endl;
+					Sleep(250);
+
+					score -= 5;
+				}
+
 				update_vertex(C_x, C_y - 1, "C");
+				update_weight(C_x, C_y - 1, 0.0f);
+
 				a[1] = 1;
+
+				if (data == "E") {
+					a[0] = 1;
+				}
 			}
 		}
 
@@ -282,19 +439,42 @@ public:
 			}
 
 			else {
-				update_vertex(C_x, C_y, "*");
+				if (C_x == start_x && C_y == start_y) {
+					update_vertex(C_x, C_y, "S");
+					update_weight(C_x, C_y, 0.0f);
+				}
 
-				if (adjacency_list[C_x * 10 + (C_y + 1)].get_head()->data.data == "E") {
-					a[0] = 1;
+				else {
+					update_vertex(C_x, C_y, "*");
+					update_weight(C_x, C_y, 1.0f);
+				}
 
-					update_vertex(C_x, C_y + 1, "C");
-					a[1] = 1;
+				string data = adjacency_list[C_x * 10 + (C_y + 1)].get_head()->data.data;
 
-					return a;
+				if (data == "+") {
+					if (score < 0) {
+						score = 10;
+					}
+					else {
+						score *= 2;
+					}
+				}
+
+				else if (data == "#") {
+					cout << "You hit an obstacle" << endl;
+					Sleep(250);
+
+					score -= 5;
 				}
 
 				update_vertex(C_x, C_y + 1, "C");
+				update_weight(C_x, C_y + 1, 0.0f);
+
 				a[1] = 1;
+
+				if (data == "E") {
+					a[0] = 1;
+				}
 			}
 		}
 
@@ -305,9 +485,42 @@ public:
 			}
 
 			else {
-				update_vertex(C_x, C_y, "*");
+				if (C_x == start_x && C_y == start_y) {
+					update_vertex(C_x, C_y, "S");
+					update_weight(C_x, C_y, 0.0f);
+				}
+
+				else {
+					update_vertex(C_x, C_y, "*");
+					update_weight(C_x, C_y, 1.0f);
+				}
+
+				string data = adjacency_list[(C_x + 1) * 10 + C_y].get_head()->data.data;
+
+				if (data == "+") {
+					if (score < 0) {
+						score = 10;
+					}
+					else {
+						score *= 2;
+					}
+				}
+
+				else if (data == "#") {
+					cout << "You hit an obstacle" << endl;
+					Sleep(250);
+
+					score -= 5;
+				}
+
 				update_vertex(C_x + 1, C_y, "C");
+				update_weight(C_x + 1, C_y, 0.0f);
+
 				a[1] = 1;
+
+				if (data == "E") {
+					a[0] = 1;
+				}
 			}
 		}
 
@@ -318,17 +531,210 @@ public:
 			}
 
 			else {
-				update_vertex(C_x, C_y, "*");
+				if (C_x == start_x && C_y == start_y) {
+					update_vertex(C_x, C_y, "S");
+					update_weight(C_x, C_y, 0.0f);
+				}
+
+				else {
+					update_vertex(C_x, C_y, "*");
+					update_weight(C_x, C_y, 1.0f);
+				}
+
+				string data = adjacency_list[(C_x - 1) * 10 + C_y].get_head()->data.data;
+
+				if (data == "+") {
+					if (score < 0) {
+						score = 10;
+					}
+					else {
+						score *= 2;
+					}
+				}
+
+				else if (data == "#") {
+					cout << "You hit an obstacle" << endl;
+					Sleep(250);
+
+					score -= 5;
+				}
+
 				update_vertex(C_x - 1, C_y, "C");
+				update_weight(C_x - 1, C_y, 0.0f);
+
 				a[1] = 1;
+
+				if (data == "E") {
+					a[0] = 1;
+				}
 			}
 		}
 
-		else if (input != 'w' && input != 72 && input != 's' && input != 80 && input != 'd' && input != 77 && input != 'a' && input != 75) {
+		/*else if (input != 'w' && input != 72 && input != 's' && input != 80 && input != 'd' && input != 77 && input != 'a' && input != 75) {
 			cout << "Invalid input" << endl;
 			a[1] = 0;
-		}
+		}*/
 
 		return a;
+	}
+
+	void generate_start() {
+		int x = -1, y = -1;
+		int count = 0;
+
+		srand(time(0));
+
+		while (count < 1) {
+			x = rand() % 10;
+			//cout << "X: " << x << endl;
+
+			y = rand() % 10;
+			//cout << "Y: " << y << endl;
+
+			if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E" && get_vertex(x, y).data != "#") {
+				update_vertex(x, y, "C");
+				update_weight(x, y, 0.0f);
+
+				start_x = x;
+				start_y = y;
+
+				count++;
+			}
+		}
+	}
+
+	void generate_end() {
+		int x = -1, y = -1;
+		int count = 0;
+
+		srand(time(0));
+
+		while (count < 1) {
+			x = rand() % 10;
+			//cout << "X: " << x << endl;
+
+			y = rand() % 10;
+			//cout << "Y: " << y << endl;
+
+			if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E") {
+				update_vertex(x, y, "E");
+				update_weight(x, y, 0.0f);
+
+				end_x = x;
+				end_y = y;
+
+				count++;
+			}
+		}
+	}
+
+	//generate 20 x and y coordinates for obstacles
+	void generate_obstacles(Queue obstacles) {
+		int x = -1, y = -1;
+		int count = 0;
+
+		srand(time(0));
+
+		while (count < 20) {
+			x = rand() % 10;
+			//cout << "X: " << x << endl;
+
+			y = rand() % 10;
+			//cout << "Y: " << y << endl;
+
+			//check if the coordinates are already in the queue or there is C, S, or E on that coordinate
+			if (obstacles.get_size() == 0) {
+				if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E") {
+					update_vertex(x, y, "#");
+					update_weight(x, y, 20.0f);
+
+					obstacles.enqueue(get_vertex(x, y));
+					count++;
+				}
+			}
+
+			else {
+				Queue_Node* temp = obstacles.get_front();
+
+				while (temp) {
+					if (temp->data.x == x && temp->data.y == y) {
+						break;
+					}
+					temp = temp->next;
+				}
+
+				if (temp == NULL) {
+					if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E") {
+						update_vertex(x, y, "#");
+						update_weight(x, y, 20.0f);
+
+						obstacles.enqueue(get_vertex(x, y));
+						count++;
+					}
+				}
+			}
+		}
+	}
+
+	void dequeue_obstacles(Queue obstacles) {
+		while (obstacles.get_size() != 0) {
+			Queue_Node* temp = obstacles.dequeue();
+			delete temp;
+		}
+	}
+
+	//generate 20 x and y coordinates for powerups
+	void generate_powerups(Queue powerups) {
+		int x = -1, y = -1;
+		int count = 0;
+
+		srand(time(0));
+
+		while (count < 20) {
+			x = rand() % 10;
+			//cout << "X: " << x << endl;
+
+			y = rand() % 10;
+			//cout << "Y: " << y << endl;
+
+			//check if the coordinates are already in the queue or there is C, S, or E on that coordinate
+			if (powerups.get_size() == 0) {
+				if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E" && get_vertex(x, y).data != "#") {
+					update_vertex(x, y, "+");
+					update_weight(x, y, -5.0f);
+
+					powerups.enqueue(get_vertex(x, y));
+					count++;
+				}
+			}
+
+			else {
+				Queue_Node* temp = powerups.get_front();
+
+				while (temp) {
+					if (temp->data.x == x && temp->data.y == y) {
+						break;
+					}
+					temp = temp->next;
+				}
+
+				if (temp == NULL) {
+					if (get_vertex(x, y).data != "C" && get_vertex(x, y).data != "S" && get_vertex(x, y).data != "E" && get_vertex(x, y).data != "#") {
+						update_vertex(x, y, "+");
+						update_weight(x, y, -5.0f);
+
+						powerups.enqueue(get_vertex(x, y));
+						count++;
+					}
+				}
+			}
+		}
+	}
+
+	void dequeue_powerups(Queue powerups) {
+		while (powerups.get_size() != 0) {
+			Queue_Node* temp = powerups.dequeue();
+			delete temp;
+		}
 	}
 };

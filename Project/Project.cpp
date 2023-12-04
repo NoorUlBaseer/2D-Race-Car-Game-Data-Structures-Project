@@ -19,6 +19,7 @@ int main() {
     Graph graph(100);
 
     char move = ' ';
+    char abc = ' ';
     char mode = '1'; //1 for manual, 2 for automatic
     int* a;
 
@@ -51,80 +52,65 @@ int main() {
         }
     }
 
-    //now update whole grid to store '*' in it
-    for (char i = 0; i < 10; i++) {
-        for (char j = 0; j < 10; j++) {
-            string vertex = string(1, 'A' + i) + to_string(j);
-            graph.update_vertex(i, j, "*");
-        }
-    }
-
-    //now placve 'C' at (2, 5)
-    graph.update_vertex(2, 5, "C");
-
-    graph.update_vertex(0, 0, "S");
-
-    graph.update_vertex(9, 9, "E");
-
-    //place power-ups
-    graph.update_vertex(5, 8, "X"); //power-up
-    graph.update_weight(5, 8, -5.0f); //power-up
-
-    graph.update_vertex(5, 5, "X"); //power-up
-    graph.update_weight(5, 5, -5.0f); //power-up
-
-    graph.update_vertex(9, 5, "X"); //power-up
-    graph.update_weight(9, 5, -5.0f); //power-up
-
-    graph.update_vertex(5, 1, "X"); //power-up
-    graph.update_weight(5, 1, -5.0f); //power-up
-
-    graph.update_vertex(0, 2, "X"); //power-up
-    graph.update_weight(0, 2, -5.0f); //power-up
-
-    graph.update_vertex(0, 6, "X"); //power-up
-    graph.update_weight(0, 6, -5.0f); //power-up
-
-    //place obstacles
-    graph.update_vertex(3, 2, "#"); //obstacle 
-    graph.update_weight(3, 2, 20.0f); //obstacle
-
-    graph.update_vertex(3, 3, "#"); //obstacle
-    graph.update_weight(3, 3, 20.0f); //obstacle
-
-    graph.update_vertex(3, 4, "#"); //obstacle
-    graph.update_weight(3, 4, 20.0f); //obstacle
-
-    graph.update_vertex(3, 5, "#"); //obstacle
-    graph.update_weight(3, 5, 20.0f); //obstacle
-
-
-    graph.update_vertex(4, 4, "#"); //obstacle
-    graph.update_weight(4, 4, 20.0f); //obstacle
-
-    graph.update_vertex(5, 4, "#"); //obstacle
-    graph.update_weight(5, 4, 20.0f); //obstacle
-
     while (true) {
+        //now update whole grid to store '*' in it
+        for (char i = 0; i < 10; i++) {
+            for (char j = 0; j < 10; j++) {
+                string vertex = string(1, 'A' + i) + to_string(j);
+                graph.update_vertex(i, j, "*");
+                graph.update_weight(i, j, 1.0f);
+            }
+        }
+
+        graph.generate_start();
+        graph.generate_end();
+
+        Queue obstacles; //queue to store obstacles
+        Queue powerups; //queue to store power-ups
+
+        graph.generate_obstacles(obstacles); //generate random obstacles
+        graph.generate_powerups(powerups); //generate random power-ups
+
+        //while (true) {
         system("cls");
         cout << RED << "Welcome to 2D Race Car Game!" << RESET << endl << endl;
 
         cout << RED << "Press 1 for Manual Mode" << RESET << endl;
         cout << RED << "Press 2 for Automatic Mode" << RESET << endl;
+        cout << RED << "Press 3 to view Leaderboard" << RESET << endl;
         cout << RED << "Press 0 to Exit" << RESET << endl << endl;
 
-        cout << RED << "Enter your choice: ";
+        cout << RED << "Enter your choice: " << RESET;
         mode = _getch();
-        cout << mode << endl << endl;
+        cout << GREEN << mode << endl << endl;
         cout << RESET << endl;
 
         if (mode == '1') {
+            //reset score to 10
+            graph.set_score(10);
+
             cout << RED << "Loading..." << RESET << endl;
             Sleep(1000);
 
             system("cls");
 
-            cout << RED << "2D Race Car Game - Manual Mode" << RESET << endl << endl;
+            cout << RED << "Welcome to 2D Race Car Game - Manual Mode" << RESET << endl << endl;
+
+            cout << RED << "Enter your name: " << RESET;
+            string name;
+            cout << GREEN;
+            getline(cin, name);
+            cout<< RESET << endl << endl;
+
+            cout << RED << "Loading..." << RESET << endl;
+            Sleep(1000);
+
+            system("cls");
+
+            cout << RED << "Welcome " << GREEN << name << RED << " to 2D Race Car Game - Manual Mode" << RESET << endl << endl;
+            cout << RED << "Starting Score: " << RESET << GREEN << "10" << RESET << endl << endl;
+            cout << RED << "Current Score: " << RESET << GREEN << graph.get_score() << RESET << endl << endl;
+
             graph.display_grid();
 
             //controls
@@ -163,14 +149,17 @@ int main() {
                 if (a[0] == 1) {
                     cout << endl << endl << RED << "You Win!" << RESET << endl;
                     cout << RED << "Press any key to continue..." << RESET << endl;
-                    _getch();
+                    abc = _getch();
                     break;
                 }
 
                 if (a[0] == 0 && a[1] == 1) { //if player does not win and move is valid
                     system("cls");
 
-                    cout << RED << "2D Race Car Game - Manual Mode" << RESET << endl << endl;
+                    cout << RED << "Welcome " << GREEN << name << RED << " to 2D Race Car Game - Manual Mode" << RESET << endl << endl;
+                    cout << RED << "Starting Score: " << RESET << GREEN << "10" << RESET << endl << endl;
+                    cout << RED << "Current Score: " << RESET << GREEN << graph.get_score() << RESET << endl << endl;
+
                     graph.display_grid();
 
                     //controls
@@ -204,16 +193,34 @@ int main() {
             cin >> stop;
         }
 
+        else if (mode == '3') {
+            cout << RED << "Loading..." << RESET << endl;
+            Sleep(1000);
+
+            system("cls");
+
+            cout << RED << "2D Race Car Game - LeaderBoard" << RESET << endl << endl;
+
+            string stop;
+            cin >> stop;
+        }
+
         else if (mode == '0') {
+            //call function to dequeue all the obstacles
+            graph.dequeue_obstacles(obstacles);
+
+            //call function to dequeue all the power-ups
+            graph.dequeue_powerups(powerups);
+
             cout << RED << "Exiting..." << RESET << endl;
             Sleep(1000);
             return 0;
         }
 
         else {
-			cout << "Invalid Input!" << endl;
-			Sleep(1000);
-		}
+            cout << "Invalid Input!" << endl;
+            Sleep(1000);
+        }
     }
     return 0;
 }
