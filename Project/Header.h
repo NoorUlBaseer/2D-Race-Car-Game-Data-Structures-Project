@@ -12,7 +12,6 @@ using namespace std;
 #define BLUE    "\033[34m"
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
-//#define WHITE   "\033[37m"
 
 class Graph_Node {
 public:
@@ -884,5 +883,173 @@ public:
 		display_grid();
 
 		cout << "Total cost: " << cost[e_x * 10 + e_y] << endl;
+	}
+};
+
+class BST_Node {
+public:
+	string name;
+	int score;
+
+	BST_Node* left;
+	BST_Node* right;
+
+	BST_Node() {
+		name = "";
+		score = 0;
+		left = NULL;
+		right = NULL;
+	}
+
+	BST_Node(string name, int score) {
+		this->name = name;
+		this->score = score;
+		left = NULL;
+		right = NULL;
+	}
+};
+
+class BST {
+private:
+	BST_Node* root;
+
+public:
+	BST() {
+		root = NULL;
+	}
+
+	void set_root(BST_Node* root) {
+		this->root = root;
+	}
+
+	BST_Node* get_root() {
+		return root;
+	}
+
+	void insert(string name, int score) {
+		BST_Node* newNode = new BST_Node(name, score);
+
+		if (root == NULL) {
+			root = newNode;
+		}
+
+		else {
+			BST_Node* temp = root;
+
+			while (temp) {
+				if (name < temp->name) {
+					if (temp->left == NULL) {
+						temp->left = newNode;
+						break;
+					}
+					temp = temp->left;
+				}
+
+				else if (name > temp->name) {
+					if (temp->right == NULL) {
+						temp->right = newNode;
+						break;
+					}
+					temp = temp->right;
+				}
+
+				else {
+					cout << "Name already exists" << endl;
+					break;
+				}
+			}
+		}
+	}
+
+	void display(BST_Node* root) {
+		if (root == NULL) {
+			return;
+		}
+
+		else {
+			//traverse left subtree
+			display(root->left);
+
+			//display root node
+			cout << RED << "Name: " << GREEN << root->name << RED << "\tScore: " << GREEN << root->score << RESET << endl;
+
+			//traverse right subtree
+			display(root->right);
+		}
+	}
+
+	bool searchName(BST_Node* root, const string& name) {
+		if (root == NULL) {
+			return false;
+		}
+
+		if (name == root->name) {
+			return true;
+		}
+		else if (name < root->name) {
+			return searchName(root->left, name);
+		}
+		else {
+			return searchName(root->right, name);
+		}
+	}
+
+	bool search(string name) {
+		return searchName(root, name);
+	}
+
+	int get_score(string name) {
+		BST_Node* temp = root;
+
+		while (temp) {
+			if (name < temp->name) {
+				temp = temp->left;
+			}
+
+			else if (name > temp->name) {
+				temp = temp->right;
+			}
+
+			else {
+				return temp->score;
+			}
+		}
+		return -1;
+	}
+
+	void update_score(string name, int score) {
+		BST_Node* temp = root;
+
+		while (temp) {
+			if (name < temp->name) {
+				temp = temp->left;
+			}
+
+			else if (name > temp->name) {
+				temp = temp->right;
+			}
+
+			else {
+				temp->score = score;
+				break;
+			}
+		}
+	}
+
+	void write_file(fstream& file, BST_Node* root) {
+		if (root == NULL) {
+			return;
+		}
+
+		else {
+			//traverse left subtree
+			write_file(file, root->left);
+
+			//write root node to file
+			file << root->name << "," << root->score << endl;
+
+			//traverse right subtree
+			write_file(file, root->right);
+		}
 	}
 };

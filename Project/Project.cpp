@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <conio.h>
 #include<iomanip>
+#include<fstream>
 #include "Header.h"
 using namespace std;
 
@@ -13,16 +14,46 @@ using namespace std;
 #define BLUE    "\033[34m"
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
-//#define WHITE   "\033[37m"
 
 int main() {
     Graph graph(100);
 
     char move = ' ';
     char abc = ' ';
-    char mode = '1'; //1 for manual, 2 for automatic
+    char mode = '-1'; //1 for manual, 2 for automatic
     int* a;
     int start_x, start_y, end_x, end_y;
+
+    BST leaderboard;
+
+    fstream file;
+    //open a file for read and write
+    file.open("Leaderboard.csv", ios::in);
+
+    //if file is not opened
+    if (!file) {
+		cout << "Error in reading file+!" << endl;
+	}
+
+    //read data from file
+    string line;
+    while (getline(file, line)) {
+		string temp = line;
+
+		string name = temp.substr(0, temp.find(","));
+
+		string score = temp.substr(temp.find(",") + 1, temp.length());
+
+		int score_int = stoi(score);
+
+		leaderboard.insert(name, score_int);
+	}
+
+    //display leaderboard
+    /*leaderboard.display(leaderboard.get_root());
+    abc = _getch();*/
+
+    file.close();
 
     for (char i = 0; i < 10; i++) {
         for (char j = 0; j < 10; j++) {
@@ -100,8 +131,16 @@ int main() {
             cout << RED << "Enter your name: " << RESET;
             string name;
             cout << GREEN;
+            cin.ignore();
             getline(cin, name);
             cout<< RESET << endl << endl;
+
+            if (leaderboard.search(name) == true) {
+                graph.set_score(leaderboard.get_score(name));
+			}
+            else {
+				leaderboard.insert(name, graph.get_score());
+			}
 
             cout << RED << "Loading..." << RESET << endl;
             Sleep(1000);
@@ -180,6 +219,27 @@ int main() {
                     cout << RED << "Obstacles: " << RESET << GREEN << "#" << RESET << endl << endl;
                 }
             }
+
+            //update the score in the leaderboard
+            leaderboard.update_score(name, graph.get_score());
+
+            //display leaderboard
+            leaderboard.display(leaderboard.get_root());
+            //abc = _getch();
+
+            //open the file for write
+            file.open("Leaderboard.csv", ios::out);
+
+            //clear the file and rewrite the leaderboard data in file
+            if (file.is_open()) {
+				file.clear(); //clear the file
+				file.seekg(0, ios::beg); //move the pointer to the beginning of the file
+
+                leaderboard.write_file(file, leaderboard.get_root());
+			}
+
+            //close the file
+			file.close();
         }
 
         else if (mode == '2') {
@@ -206,11 +266,13 @@ int main() {
                 //ask the user for the start and end coordinates
                 cout << RED << "Enter the X coordinates of the start point: " << RESET;
                 cout << GREEN;
+                cin.ignore();
                 cin >> start_x;
                 cout << RESET;
 
                 cout << RED << "Enter the Y coordinates of the start point: " << RESET;
                 cout << GREEN;
+                cin.ignore();
                 cin >> start_y;
                 cout << RESET;
 
@@ -218,11 +280,13 @@ int main() {
 
                 cout << RED << "Enter the X coordinates of the end point: " << RESET;
                 cout << GREEN;
+                cin.ignore();
                 cin >> end_x;
                 cout << RESET;
 
                 cout << RED << "Enter the Y coordinates of the end point: " << RESET;
                 cout << GREEN;
+                cin.ignore();
                 cin >> end_y;
                 cout << RESET;
 
@@ -270,9 +334,26 @@ int main() {
 
             cout << RED << "2D Race Car Game - LeaderBoard" << RESET << endl << endl;
 
-            string stop;
-            cin >> stop;
+            //display leaderboard
+            leaderboard.display(leaderboard.get_root());
+            
+            cout << endl << RED << "Press any key to continue..." << RESET << endl;
+            abc = _getch();
         }
+
+        //else if (mode == '4') {
+        //    cout << "Enter the name to be searched" << endl;
+        //    string name;
+        //    cin.ignore();
+        //    cin >> name;
+
+        //    //leaderboard.display(leaderboard.get_root());
+
+        //    cout << leaderboard.search(name) << endl;
+        //    //cout << leaderboard.get_score(name) << endl;
+
+        //    abc = _getch();
+        //}
 
         else if (mode == '0') {
             //call function to dequeue all the obstacles
