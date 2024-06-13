@@ -1,5 +1,5 @@
-2D Race Car Game
-Introduction:
+**2D Race Car Game
+**Introduction:
 Welcome to the 2D Race Car Game! It is a grid-based racing game implemented using C++ and various data structures where players navigate a car from a starting point to an end point, overcoming obstacles and collecting power-ups along the way.
 Features:
 1. Manual and Automatic Modes:
