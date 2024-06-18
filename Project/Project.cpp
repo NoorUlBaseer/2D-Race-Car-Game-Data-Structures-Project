@@ -21,7 +21,7 @@ using namespace std; //for using standard library
 #define MAGENTA "\033[35m"
 #define CYAN    "\033[36m"
 
-int main() { //main function
+int main() { //main function 
     Graph graph(100); //create a graph object with 100 vertices
 
     char move = ' '; //to store the move key pressed by the user
