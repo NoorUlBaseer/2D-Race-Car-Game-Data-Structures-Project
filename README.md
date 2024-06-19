@@ -66,8 +66,14 @@ Welcome to the 2D Race Car Game! It is a grid-based racing game implemented usin
   - Macros for different colors used in the console output (e.g., RED, GREEN, etc.).
 
 ## Setup and Execution
-1. **Compile the Code:**
+1. **Clone the repository:** 
+   - Clone this repository to your local machine using Git:
+   ```
+   git clone https://github.com/NoorUlBaseer/2D-Race-Car-Game-Data-Structures-Project
+   ```
+
+2. **Compile the Code:**
    - Use a C++ compiler to compile the source code.
    
-2. **Run the Executable:**
+3. **Run the Executable:**
    - Execute the compiled program to start the game.
